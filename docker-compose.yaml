@@ -11,3 +11,21 @@ services:
       - "./localstack_data:/var/lib/localstack"
       - "./localstack.d/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
       - "/var/run/docker.sock:/var/run/docker.sock"
+
+  db:
+    build:
+      dockerfile: ./MySQL/Dockerfile
+      args:
+        - MYSQL_DATABASE=${MYSQL_DATABASE}
+        - MYSQL_USER=${MYSQL_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    restart: always
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - my-db:/var/lib/mysql
+volumes:
+  my-db:
