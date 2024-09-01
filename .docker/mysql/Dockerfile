@@ -12,9 +12,9 @@ ENV MYSQL_DATABASE=$MYSQL_DATABASE
 ENV MYSQL_PASSWORD=$MYSQL_PASSWORD
 ENV MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
 
-ADD ./MySQL/data.sql /etc/mysql/data.sql
+ADD ./.docker/mysql/data.sql /etc/mysql/data.sql
 
 RUN sed -i 's/MYSQL_DATABASE/'$MYSQL_DATABASE'/g' /etc/mysql/data.sql
-COPY ./MySQL/data.sql /docker-entrypoint-initdb.d/data.sql
+COPY ./.docker/mysql/data.sql /docker-entrypoint-initdb.d/data.sql
 
 EXPOSE 3306

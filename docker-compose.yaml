@@ -12,20 +12,33 @@ services:
       - "./localstack.d/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh"  # ready hook
       - "/var/run/docker.sock:/var/run/docker.sock"
 
-  db:
+
+  web:
     build:
-      dockerfile: ./MySQL/Dockerfile
-      args:
-        - MYSQL_DATABASE=${MYSQL_DATABASE}
-        - MYSQL_USER=${MYSQL_USER}
-        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-        - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    restart: always
+      context: .
+      dockerfile: Dockerfile
+    image: app
+    container_name: app
+    restart: unless-stopped
+    env_file: .env
     ports:
-      - '3306:3306'
+      - "$PORT:$PORT"
+    depends_on: 
+      - mongodb
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USERNAME
+      - MONGO_INIT_BDROOT_PASSWORD=$DB_PASSWORD
+    ports:
+      - '$DB_PORT:$DB_PORT'
     expose:
       - '3306'
     volumes:
-      - my-db:/var/lib/mysql
+      - my-db:/data/db
 volumes:
   my-db:
